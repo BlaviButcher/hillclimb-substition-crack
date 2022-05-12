@@ -107,7 +107,7 @@ func runCipher(cipher []string, cipherKeyMap map[string]string) {
 			maxScore = parentScore
 			maxKey = parentKey
 			maxDeciphered = parentMaxDeciphered
-			out := fmt.Sprintf("New max score: %d on iteration: %d ", maxScore, iteration)
+			out := fmt.Sprintf("New max score: %.2f on iteration: %d ", maxScore, iteration)
 			fmt.Printf(out)
 			fmt.Printf("Key: %s\n", maxKey)
 			writeToFile(out, maxKey, cipherKeyMap, maxDeciphered)
@@ -180,20 +180,20 @@ func scoreDecipher(deciphered []string, quadgrams map[string]int, trigrams map[s
 	// }
 	// score += quadScore
 
-	triScore := 0
+	triScore := 0.0
 	for i := 2; i < len(deciphered); i++ {
 		trigram := deciphered[i-2] + deciphered[i-1] + deciphered[i]
 		if s, ok := trigrams[trigram]; ok {
-			triScore += s
+			triScore += float64(s)
 		}
 	}
 	score += triScore
 
-	biScore := 0
+	biScore := 0.0
 	for i := 1; i < len(deciphered); i++ {
 		bigram := deciphered[i-1] + deciphered[i]
 		if s, ok := bigrams[bigram]; ok {
-			biScore += s
+			biScore += float64(s)
 		}
 	}
 	score += biScore
