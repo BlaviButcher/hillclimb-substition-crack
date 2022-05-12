@@ -12,7 +12,7 @@ import (
 )
 
 var maxKey = strings.Split("ABCDEFGHIJKLMNOPQRSTUVWXYZ", "")
-var maxScore = -10000000000
+var maxScore = -10000000000.0
 var parentKey = maxKey
 var parentScore = maxScore
 var iteration = 0
@@ -167,18 +167,18 @@ func keyMapToString(keyMap map[string]string) string {
 	return keyString
 }
 
-func scoreDecipher(deciphered []string, quadgrams map[string]int, trigrams map[string]int, bigrams map[string]int, monograms map[string]int, quintgrams map[string]int) int {
+func scoreDecipher(deciphered []string, quadgrams map[string]int, trigrams map[string]int, bigrams map[string]int, monograms map[string]int, quintgrams map[string]int) float64 {
 	// read in quadgram file and create map of quadgram: score
 
-	score := 0
-	quadScore := 0
-	for i := 3; i < len(deciphered); i++ {
-		quadgram := deciphered[i-3] + deciphered[i-2] + deciphered[i-1] + deciphered[i]
-		if s, ok := quadgrams[quadgram]; ok {
-			quadScore += s
-		}
-	}
-	score += quadScore
+	score := 0.0
+	// quadScore := 0
+	// for i := 3; i < len(deciphered); i++ {
+	// 	quadgram := deciphered[i-3] + deciphered[i-2] + deciphered[i-1] + deciphered[i]
+	// 	if s, ok := quadgrams[quadgram]; ok {
+	// 		quadScore += s
+	// 	}
+	// }
+	// score += quadScore
 
 	triScore := 0
 	for i := 2; i < len(deciphered); i++ {
@@ -198,23 +198,23 @@ func scoreDecipher(deciphered []string, quadgrams map[string]int, trigrams map[s
 	}
 	score += biScore
 
-	monoScore := 0
-	for i := 0; i < len(deciphered); i++ {
-		monogram := deciphered[i]
-		if s, ok := monograms[monogram]; ok {
-			monoScore += s
-		}
-	}
-	score += monoScore
+	// monoScore := 0
+	// for i := 0; i < len(deciphered); i++ {
+	// 	monogram := deciphered[i]
+	// 	if s, ok := monograms[monogram]; ok {
+	// 		monoScore += s
+	// 	}
+	// }
+	// score += monoScore
 
-	quintScore := 0
-	for i := 4; i < len(deciphered); i++ {
-		quintgram := deciphered[i-4] + deciphered[i-3] + deciphered[i-2] + deciphered[i-1] + deciphered[i]
-		if s, ok := quintgrams[quintgram]; ok {
-			quintScore += s
-		}
-	}
-	score += quintScore
+	// quintScore := 0
+	// for i := 4; i < len(deciphered); i++ {
+	// 	quintgram := deciphered[i-4] + deciphered[i-3] + deciphered[i-2] + deciphered[i-1] + deciphered[i]
+	// 	if s, ok := quintgrams[quintgram]; ok {
+	// 		quintScore += s
+	// 	}
+	// }
+	// score += quintScore
 
 	return score
 }
