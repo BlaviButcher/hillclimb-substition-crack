@@ -58,8 +58,11 @@ func removeDuplicateStr(strSlice []string) []string {
 }
 
 func runCipher(cipher []string, cipherKeyMap map[string]string) {
-	quadgrams := readGrams("quadgrams.txt")
-	trigrams := readGrams("trigrams.txt")
+	quadgrams := readGram("quadgrams.txt")
+	trigrams := readGram("trigrams.txt")
+	bigrams := readGram("bigrams.txt")
+	monograms := readGram("monograms.txt")
+	quintgrams := readGram("quintgrams.txt")
 
 	for true {
 		iteration++
@@ -73,7 +76,7 @@ func runCipher(cipher []string, cipherKeyMap map[string]string) {
 		// add key to cipherMap
 		cipherKeyMap = mapKeyToCipher(parentKey, cipherKeyMap)
 		deciphered := decipher(cipher, cipherKeyMap)
-		parentScore := scoreDecipher(deciphered, quadgrams, trigrams)
+		parentScore := scoreDecipher(deciphered, quadgrams, trigrams, bigrams, monograms, quintgrams)
 		parentMaxDeciphered = "null"
 
 		count := 0
@@ -89,7 +92,7 @@ func runCipher(cipher []string, cipherKeyMap map[string]string) {
 
 			deciphered := decipher(cipher, cipherKeyMap)
 
-			score := scoreDecipher(deciphered, quadgrams, trigrams)
+			score := scoreDecipher(deciphered, quadgrams, trigrams, bigrams, monograms, quintgrams)
 
 			if score > parentScore {
 				parentScore = score
@@ -138,7 +141,7 @@ func getDecipherText(keyMap map[string]string, cipher []string) string {
 
 }
 
-func readGrams(filename string) map[string]int {
+func readGram(filename string) map[string]int {
 	grams := make(map[string]int)
 	// Open the file
 	file, err := ioutil.ReadFile(filename)
@@ -164,7 +167,7 @@ func keyMapToString(keyMap map[string]string) string {
 	return keyString
 }
 
-func scoreDecipher(deciphered []string, quadgrams map[string]int, trigrams map[string]int) int {
+func scoreDecipher(deciphered []string, quadgrams map[string]int, trigrams map[string]int, bigrams map[string]int, monograms map[string]int, quintgrams map[string]int) int {
 	// read in quadgram file and create map of quadgram: score
 
 	score := 0
@@ -185,6 +188,33 @@ func scoreDecipher(deciphered []string, quadgrams map[string]int, trigrams map[s
 		}
 	}
 	score += triScore
+
+	biScore := 0
+	for i := 1; i < len(deciphered); i++ {
+		bigram := deciphered[i-1] + deciphered[i]
+		if s, ok := bigrams[bigram]; ok {
+			biScore += s
+		}
+	}
+	score += biScore
+
+	monoScore := 0
+	for i := 0; i < len(deciphered); i++ {
+		monogram := deciphered[i]
+		if s, ok := monograms[monogram]; ok {
+			monoScore += s
+		}
+	}
+	score += monoScore
+
+	quintScore := 0
+	for i := 4; i < len(deciphered); i++ {
+		quintgram := deciphered[i-4] + deciphered[i-3] + deciphered[i-2] + deciphered[i-1] + deciphered[i]
+		if s, ok := quintgrams[quintgram]; ok {
+			quintScore += s
+		}
+	}
+	score += quintScore
 
 	return score
 }
